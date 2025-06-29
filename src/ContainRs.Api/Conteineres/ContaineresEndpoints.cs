@@ -2,7 +2,7 @@
 using ContainRs.Api.Domain;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ContainRs.Api.Containeres;
+namespace ContainRs.Api.Conteineres;
 
 public static class ContaineresEndpoints
 {

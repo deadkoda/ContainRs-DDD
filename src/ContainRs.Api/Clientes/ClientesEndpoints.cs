@@ -40,7 +40,7 @@ public static class ClientesEndpoints
         {
             var cliente = await repository
                 .GetFirstAsync(
-                    c => c.Id == id, 
+                    c => c.Id == id,
                     c => c.Id);
             if (cliente is null) return Results.NotFound();
 
@@ -71,7 +71,7 @@ public static class ClientesEndpoints
             }
             await repository.AddAsync(cliente);
 
-            return Results.CreatedAtRoute(ENDPOINT_NAME_GET_CLIENTE, new { id = cliente.Id },  ClienteResponse.From(cliente));
+            return Results.CreatedAtRoute(ENDPOINT_NAME_GET_CLIENTE, new { id = cliente.Id }, ClienteResponse.From(cliente));
         })
         .AllowAnonymous()
         .Produces<ClienteResponse>(StatusCodes.Status201Created);
@@ -128,7 +128,7 @@ public static class ClientesEndpoints
 
     public static RouteGroupBuilder MapGetRegistrationStatus(this RouteGroupBuilder builder)
     {
-        builder.MapGet("registration/status", 
+        builder.MapGet("registration/status",
             async (
                 [FromQuery] string email
                 , [FromServices] IRepository<Cliente> repository
