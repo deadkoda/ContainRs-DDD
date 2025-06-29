@@ -1,6 +1,4 @@
-﻿using ContainRs.Domain.Models;
-
-namespace ContainRs.Api.Domain;
+﻿namespace ContainRs.Vendas.Propostas;
 
 public record StatusPedido(string Status)
 {
@@ -20,9 +18,8 @@ public record StatusPedido(string Status)
         };
     }
 }
-
 /// <summary>
-/// Pedido formal realizado por um cliente interessado na locação de um contêiner. A solicitação pode incluir informações sobre finalidade, localização, quantidade e período desejado.
+/// Pedido formal realizado por um cliente interessado na locação de um contêiner. A solicitação pode incluir informações sobre finalidade, localização, quantidade e período desejado. <see href="https://wiki.containrs.com/glossario"/>
 /// </summary>
 public class PedidoLocacao
 {

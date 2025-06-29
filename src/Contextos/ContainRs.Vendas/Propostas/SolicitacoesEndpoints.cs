@@ -1,12 +1,7 @@
-﻿using ContainRs.Api.Contracts;
-using ContainRs.Api.Domain;
-using ContainRs.Api.Endpoints;
-using ContainRs.Api.Extensions;
-using ContainRs.Api.Requests;
-using ContainRs.Api.Responses;
+﻿using ContainRs.Contracts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ContainRs.Api.Propostas;
+namespace ContainRs.Vendas.Propostas;
 
 public static class SolicitacoesEndpoints
 {
@@ -14,7 +9,7 @@ public static class SolicitacoesEndpoints
     public static IEndpointRouteBuilder MapSolicitacoesEndpoints(this IEndpointRouteBuilder builder)
     {
         var group = builder
-            .MapGroup(EndpointConstants.ROUTE_SOLICITACOES)
+            .MapGroup(EndpointConstants.ROUTE_PEDIDOS)
             .RequireAuthorization(policy => policy.RequireRole("Cliente"))
             .WithTags(EndpointConstants.TAG_LOCACAO)
             .WithOpenApi();
@@ -53,10 +48,13 @@ public static class SolicitacoesEndpoints
             HttpContext context,
             [FromServices] IRepository<PedidoLocacao> repository) =>
         {
-            var clienteId = context.GetClienteId();
+            var clienteId = context.User.Claims
+               .Where(c => c.Type.Equals("ClienteId"))
+               .Select(c => c.Value)
+               .FirstOrDefault();
             if (clienteId is null) return Results.Unauthorized();
 
-            var solicitacoes = await repository.GetWhereAsync(s => s.ClienteId == clienteId.Value && s.Status.Status.Equals("Ativa"));
+            var solicitacoes = await repository.GetWhereAsync(s => s.ClienteId == Guid.Parse(clienteId) && s.Status.Status.Equals("Ativa"));
             return Results.Ok(solicitacoes.Select(SolicitacaoResponse.From));
         })
         .WithSummary("Lista as solicitações ativas do cliente")
@@ -72,12 +70,15 @@ public static class SolicitacoesEndpoints
             , HttpContext context
             , [FromServices] IRepository<PedidoLocacao> repository) =>
         {
-            var clienteId = context.GetClienteId();
+            var clienteId = context.User.Claims
+               .Where(c => c.Type.Equals("ClienteId"))
+               .Select(c => c.Value)
+               .FirstOrDefault();
             if (clienteId is null) return Results.Unauthorized();
 
             var solicitacao = new PedidoLocacao
             {
-                ClienteId = clienteId.Value,
+                ClienteId = Guid.Parse(clienteId),
                 Descricao = request.Descricao,
                 QuantidadeEstimada = request.QuantidadeEstimada,
                 Finalidade = request.Finalidade,
@@ -91,7 +92,7 @@ public static class SolicitacoesEndpoints
             }
 
             await repository.AddAsync(solicitacao);
-            
+
             return Results.CreatedAtRoute(ENDPOINT_NAME_GET_SOLICITACAO, new { id = solicitacao.Id }, SolicitacaoResponse.From(solicitacao));
         })
         .WithSummary("Cliente solicita propostas de locação")

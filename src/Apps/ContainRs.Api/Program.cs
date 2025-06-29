@@ -1,5 +1,5 @@
 using ContainRs.Api.Clientes;
-using ContainRs.Api.Containeres;
+using ContainRs.Api.Conteineres;
 using ContainRs.Api.Contracts;
 using ContainRs.Api.Data;
 using ContainRs.Api.Data.Repositories;
